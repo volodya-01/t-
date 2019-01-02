@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>模拟时钟</title>
+    <style>
+        #draw{
+		margin-top: 100px;
+		width: 120px;
+		height: 120px;
+		margin-right: auto;
+		margin-left: auto;
+		
+	}
+	#clock{
+		width: 120px;
+		height: 120px;
+	}
+	</style>
+</head>
+
+<body>
+    <div id="draw">
+        <canvas id="clock" width="120px" height="120px"></canvas>
+    </div>
+    <script type="text/javascript">
+        var clock = document.getElementById("clock");
+        var cxt = clock.getContext("2d");
+        //真正内容宽度：80
+        var r = (cxt.canvas.width) / 2;
+        //包括边框等一系列宽度：82
+        //var r=document.getElementById("draw").offsetWidth;
+        //在style属性里写了的才能显示：80px
+        //var r=document.getElementById("draw").style.width;
+        //console.log(r);
+
+        function drawbg() {
+            cxt.save();
+            cxt.translate(r, r);
+            cxt.beginPath();
+            cxt.lineWidth = 10;
+            //注意，半径的算法是圆心到线条的中间
+            cxt.arc(0, 0, r - 5, 0, 2 * Math.PI, false);
+            cxt.stroke();
+            //cxt.beginPath();	
+            cxt.font = "12px Arial";
+            var smallr = r - 25;
+            cxt.textAlign = "center";
+            cxt.textBaseline = "middle";
+            var hours = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2];
+            hours.forEach(function (hour, i) {
+                var x = smallr * Math.cos(i * 30 * Math.PI / 180);
+                var y = smallr * Math.sin(i * 30 * Math.PI / 180);
+                //注意，这儿不能用strokeText()
+                cxt.fillText(hour, x, y);
+            });
+            var dotr = r - 18;
+            cxt.textAlign = "center";
+            //基线这儿不怎么懂！
+            cxt.textBaseline = "alphabetic";
+            for (var i = 0; i < 60; i++) {
+                var x = dotr * Math.cos(i * Math.PI / 30);
+                var y = dotr * Math.sin(i * Math.PI / 30);
+                if (i % 5 != 0)
+                    cxt.fillText(".", x, y);
+            }
+        }
+
+        function drawhour(Hour, Minute) {
+            cxt.save();
+            var rad1 = (2 * Math.PI / 12 / 5 / 60) * Minute;
+            var rad2 = (2 * Math.PI / 12) * Hour;
+            cxt.beginPath();
+            cxt.rotate(rad1 + rad2);
+            cxt.lineWidth = 4;
+            cxt.lineCap = "round";
+            cxt.moveTo(0, 1);
+            cxt.lineTo(0, -19);
+            cxt.stroke();
+            cxt.restore();
+        }
+
+        function drawminutes(Minute) {
+            cxt.save();
+            var rad = (2 * Math.PI / 60) * Minute;
+            cxt.beginPath();
+            cxt.rotate(rad);
+            cxt.lineWidth = 3;
+            cxt.lineCap = "round";
+            cxt.moveTo(0, 3);
+            cxt.lineTo(0, -21);
+            cxt.stroke();
+            cxt.restore();
+        }
+
+        function drawsecond(Second) {
+            cxt.save();
+            var rad = (2 * Math.PI / 12 / 5) * Second;
+            cxt.beginPath();
+            cxt.rotate(rad);
+            cxt.lineWidth = 2;
+            cxt.lineCap = "round";
+            cxt.moveTo(0, 5);
+            cxt.lineTo(0, -24);
+            cxt.stroke();
+            cxt.restore();
+        }
+
+        function drawtime() {
+            cxt.clearRect(0, 0, r * 2, r * 2);
+            var now = new Date();
+            var Hour = now.getHours();
+            var Minute = now.getMinutes();
+            var Second = now.getSeconds();
+            drawbg();
+            drawhour(Hour, Minute);
+            drawminutes(Minute);
+            drawsecond(Second);
+            cxt.restore();
+        }
+        setInterval(drawtime, 1000);
+    </script>
+</body>
+
+</html>

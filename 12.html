@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            text-decoration: none;
+        }
+
+        body {
+            background: #efefef;
+        }
+
+        /*时间轴样式*/
+        .heatMapTimer {
+            position: absolute;
+            width: 100%;
+            z-index: 1;
+            text-align: center;
+            top: 40px;
+        }
+
+        .time-item {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin: 0 10px;
+        }
+
+        .time-item,
+        .time-btn {
+            display: inline-block;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .time-btn {
+            border-radius: 3px;
+            width: 30px;
+            height: 30px;
+            font-size: 23px;
+            background: #fff;
+            margin-right: 10px;
+        }
+
+        /*播放样式*/
+        .time-play:before {
+            display: block;
+            content: '';
+            border-top: 12px solid transparent;
+            border-left: 12px solid #595959;
+            border-bottom: 12px solid transparent;
+            width: 0;
+            height: 0;
+            text-align: center;
+            margin: 3px auto 0;
+        }
+
+        /*暂停的样式*/
+        .time-pause:before,
+        .time-pause:after {
+            content: ' ';
+            border-radius: 3px;
+            border-top: 6px solid #595959;
+            border-bottom: 6px solid #595959;
+            border-left: 3px solid #595959;
+            border-right: 3px solid #595959;
+            margin: 3px;
+            overflow: hidden;
+            display: inline-block;
+            height: 12px;
+        }
+
+        /*时间点选中样式*/
+        .time-item.active {
+            background-color: #34b93d;
+        }
+    </style>
+    <script src="1.js"></script>
+    <script>
+            timeClick(); //时间轴点击事件
+        addTimeTitle(); //为时间轴的li标签动态添加title属性(本篇默认加的是最近十二个小时的时间阶段，可根据自己的需要选择是否引用
+        
+
+        function timeClick() {
+            var timer,
+                index, //定义li选中状态时的索引
+                $timeUl = $(".time-line"),
+                $timeLi = $(".time-line li"),
+                lenCount = $timeLi.length - 1; //去除第一个按钮li标签的长度
+            //点击播放时间轴事件
+            $timeUl.on("click", ".time-play", function () {
+                $(this).removeClass("time-play").addClass("time-pause");
+                index = Number($timeUl.find("li.active").attr("data-index")); //将字符串强制转换为数字类型
+                timer = setInterval(function () {
+                    //判断当前索引的位置，如果在最后一位则从第一个时间点开始，反之则按顺序播放
+                    if (lenCount == index + 1) {
+                        $timeUl.find("li:eq('" + lenCount + "')").removeClass("active");
+                        $timeUl.find("li:eq(1)").addClass("active");
+                    } else {
+                        $(".time-line li.active").next().addClass("active").siblings().removeClass(
+                            "active");
+                    }
+                    $timeLi.each(function () {
+                        if ($(this).hasClass("active")) {
+                            index = Number($(this).attr("data-index")); //字符串转换为数字类型，索引从0开始
+                        }
+                    });
+                }, 2000)
+            });
+            //点击暂停按钮事件
+            $(".time-line").on("click", ".time-pause", function () {
+                $(this).removeClass("time-pause").addClass("time-play");
+                clearInterval(timer); //清除定时器
+            });
+            //点击某个时间点时触发事件
+            $timeLi.not(":first-child").click(function () {
+                var index = $(this).data("index");
+                $(this).addClass("active").siblings().removeClass("active");
+                clearInterval(timer); //清除定时器
+            })
+        }
+
+        function addTimeTitle() {
+            var date = [];
+            for (var i = 12; i >= 1; i--) {
+                date.push({
+                    index: i,
+                    time: getFormatDate(i)
+                });
+            }
+            //数组排序
+            date = date.sort(function (a, b) {
+                return a.index > b.index ? -1 : 1;
+            });
+            $.each(date, function (index, item) {
+                $(".time-line li:eq('" + (index + 1) + "')").attr("title", item.time);
+            })
+        }
+        //获取系统时间的最近十二个小时
+        function getFormatDate(hourCount) {
+            var now = new Date();
+            var date = new Date(new Date(now.getTime() - hourCount * 3600 * 1000));
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            month = (month <= 9) ? "0" + month : month;
+            var day = date.getDate();
+            day = (day <= 9) ? "0" + day : day;
+            var hour = date.getHours();
+            hour = (hour <= 9) ? "0" + hour : hour;
+            var minute = date.getMinutes();
+            minute = (minute <= 9) ? "0" + minute : minute;
+            var dateTime = year + "-" + month + "-" + day + " " + hour + ": 00: 00 "; return dateTime; }
+    </script>
+</head>
+
+<body>
+    <div class="heatMapTimer">
+        <ul class="time-line">
+            <li class="time-btn time-play"></li>
+            <li class="time-item" data-index="0"></li>
+            <li class="time-item" data-index="1"></li>
+            <li class="time-item" data-index="2"></li>
+            <li class="time-item" data-index="3"></li>
+            <li class="time-item" data-index="4"></li>
+            <li class="time-item" data-index="5"></li>
+            <li class="time-item" data-index="6"></li>
+            <li class="time-item" data-index="7"></li>
+            <li class="time-item" data-index="8"></li>
+            <li class="time-item" data-index="9"></li>
+            <li class="time-item" data-index="10"></li>
+            <li class="time-item active" data-index="11"></li>
+        </ul>
+    </div>
+
+</body>
+
+</html>

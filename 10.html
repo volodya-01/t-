@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>动态矩形框</title>
+    <script>
+
+        function shezhi(){
+
+//获取输入框的值
+var rangele = document.getElementById('rangele');
+var myLength = document.getElementById('Length').value;
+var myWide = document.getElementById('Wide').value;
+var myColor = document.getElementById('Color').value;
+rangele.style.height=myLength+"px";
+rangele.style.width=myWide+"px";
+rangele.style.backgroundColor=myColor;
+}
+</script>
+</head>
+
+<body onload="">
+
+    <h1>动态矩形框</h1>
+    <span>矩形的长度：<input type="text" id="Length" value="50"></span><br><br>
+    <span>矩形的宽度：<input type="text" id="Wide" value="50"></span><br><br>
+    <span>矩形的颜色：<input type="text" id="Color" value="red"></span><br><br>
+    <button onclick="shezhi();">确定更改</button>
+    <hr>
+    <div id="rangele" style="border: 2px solid #ccc;background: red">
+        &nbsp;
+    </div>
+</body>
+
+</html>

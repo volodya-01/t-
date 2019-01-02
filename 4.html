@@ -1,0 +1,67 @@
+<html>
+
+<head>
+    <style type="text/css">
+        #aini {
+            width: 1px;
+            height: 50px;
+            background: blue;
+        }
+
+        #aini2 {
+            width: 50px;
+            height: 50px;
+            background: blue;
+            left: 20px;
+        }
+    </style>
+    <script>
+        function pageX(el){
+    return el.offsetParent?el.offsetLeft+pageX(el.offsetParent):el.offsetLeft;
+  };
+  function pageY(el){
+    return el.offsetParent?el.offsetTop+pageY(el.offsetParent):el.offsetTop;
+  };
+
+  var tween = {
+    /*
+      t=0~d , b=??? ,c = ???? ? d = ???-???
+    */
+    Linear: function(t,b,c,d){ return c*t/d + b; },
+  };
+  function aini(el,opt){
+    el.style.position="absolute";
+    var duration = opt.duration||1000;
+    var t = 0,d=Math.floor(duration/16);
+    var X = pageX(el),Y=pageY(el);
+    var dx = opt.X-X,dy = opt.Y-Y;
+    
+    function _aini(){
+      if(t<d){
+        el.style.left=tween.Linear(t,X,dx,d)+"px";
+        //el.style.top=tween.Linear(t,0,dy,d)+X+"px";
+        //el.style.top=PY+"px";
+        t++;
+        setTimeout(arguments.callee,100);
+      }else{
+        el.style.left=opt.X+"px";
+        //el.style.top=opt.Y+"px";
+      }
+    };
+    _aini();
+  }
+  //window.onload = function(){
+    //aini(document.getElementById('aini'),{X:200,Y:200});
+  //}
+</script>
+</head>
+
+<body>
+    <p><input type="button" onClick="aini(document.getElementById('aini'),{X:800,Y:200});" value="点下我看看" /></p>
+
+    <div>
+        <div id="aini"></div>
+    </div>
+</body>
+
+</html>

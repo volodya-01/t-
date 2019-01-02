@@ -1,0 +1,27 @@
+<html>
+
+<head>
+    <title>test</title>
+    <meta http-equiv='Content-Language' content='zh-cn' />
+    <meta http-equiv='content-type' content='text/html; charset=UTF-8' />
+    <script>
+        var xp = 0;
+        var moveTimer;
+
+        function move() {
+            xp = xp + 5; //位移的大小
+            document.getElementById('moveObj').style.left = xp + 'px'; //移动的方向；
+            if (xp >= 1000)
+                clearInterval(moveTimer); //移动的距离；
+        }
+        window.onload = function () {
+            moveTimer = setInterval(move, 2);
+        } //移动的速度；
+    </script>
+</head>
+
+<body>
+    <div id="moveObj" style="height:120px;width:230px;background-color:red;position:absolute;left:0;top:0"></div>
+</body>
+
+</html>
